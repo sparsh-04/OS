@@ -19,7 +19,7 @@ int
 main ()
 {
   struct my_msgbuf buf;
-  int msqid, len;
+  int msgqid, len;
   key_t key;
   int client_id;
   printf ("Enter Client-ID: ");
@@ -41,26 +41,35 @@ main ()
   switch (which_task_to_do)
     {
     case 1:
+    if ((key = ftok("server.c",'B')) == -1){
+    perror("ftok");
+    exit(1);
+  }
+    if ((msgqid = msgget(key, PERMS )) == -1){
+    perror("msgget");
+    exit(1);
+  }
       /* code */
+      buf.mtype=client_id;
       leni = sprintf (buf.mtext, "hi");
-      if (msgsnd (msqid, &buf, leni + 1, 0) == -1)
+      if (msgsnd (msgqid, &buf, leni + 1, 0) == -1)
 	{
 	  perror ("msgsnd");
 	  exit (0);
 	}
-if((key=ftok("Writer.c",'B'))==-1){
-     perror("ftok");
-     exit(1);
-}
-if((msqid=msgget(key, PERMS | IPC_CREAT))==-1){
+// if((key=ftok("server.c",'B'))==-1){
+//      perror("ftok");
+//      exit(1);
+// }
+if((msgqid=msgget(key, PERMS | IPC_CREAT))==-1){
      perror("MSGGET");
      exit(1);
 }
 printf("Reader: ready to recieve message.\n");
 //printf("Enter: lines of text message.\n");
-//buf.mtype=1;
+buf.mtype=1;
      while (1){
-             if(msgrcv(msqid,&buf,sizeof(buf.mtext),0,0)==-1){
+             if(msgrcv(msgqid,&buf,sizeof(buf.mtext),0,0)==-1){
 
              perror("msgrcv");
              exit(1);

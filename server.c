@@ -75,6 +75,7 @@ main ()
 	  read (pipe_fd[0], parent_a, 20);
 	  if((parent_a[0]=1 )&& (parent_a[1]=2)){
 		int len=sprintf(buf.mtext,"hello");
+    printf("anefnewf");
 		if(msgsnd(msqid,&buf,len+1,0)==-1){
 				perror("msgsnd");
 				exit(0);
@@ -94,6 +95,6 @@ main ()
 
 
 
-  return 0;
 }
+  return 0;
 }
