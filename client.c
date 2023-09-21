@@ -48,6 +48,28 @@ main ()
 	  perror ("msgsnd");
 	  exit (0);
 	}
+if((key=ftok("Writer.c",'B'))==-1){
+     perror("ftok");
+     exit(1);
+}
+if((msqid=msgget(key, PERMS | IPC_CREAT))==-1){
+     perror("MSGGET");
+     exit(1);
+}
+printf("Reader: ready to recieve message.\n");
+//printf("Enter: lines of text message.\n");
+//buf.mtype=1;
+     while (1){
+             if(msgrcv(msqid,&buf,sizeof(buf.mtext),0,0)==-1){
+
+             perror("msgrcv");
+             exit(1);
+             }
+
+     printf("Reader: \"%s\"\n",buf.mtext);
+
+     }
+
       break;
     case 2:
       printf ("Enter the file name\n");
