@@ -9,7 +9,22 @@
 #include<sys/wait.h>
 #define ARRAY_SIZE 5
 #define PERMS 0644
+int get_number(char * a){
+  int i=0,num=0;
+  while(a[i]!=';'){
+    num=num*10;
+    num+=a[i]-'0';
+    i++;
+  }
+  return num;
+}
+int get_taski(char * a){
+  int i=0;
 
+  while(a[i++]!=';'){
+  }
+  return i;
+}
 struct my_msgbuf
 {
   long mtype;
@@ -45,7 +60,7 @@ main ()
     }
   while (1)
     {
-      if (msgrcv (msqid, &buf, sizeof (buf.mtext), 0, 0) == -1)
+      if (msgrcv (msqid, &buf, sizeof (buf.mtext), 1000, 0) == -1)
 	{
 	  perror ("msgrcv");
 	  exit (1);
@@ -60,33 +75,43 @@ main ()
 	}
       else if (child_pid != 0)
 	{
-	  close (pipe_fd[0]);
-	  if((buf.mtext[0]='h' )&& (buf.mtext[1]='i')){
+        //parent process
 
-	  int child_a[ARRAY_SIZE] = { 1, 2};
-	  write (pipe_fd[1], child_a, sizeof (child_a));
-	  }
+	  close (pipe_fd[0]);
+
+    write (pipe_fd[1], buf.mtext,1 + strlen(buf.mtext));
 	  close (pipe_fd[1]);
 	}
       else
 	{
+
+    //child process
+    int len;
 	  close (pipe_fd[1]);
-	  int parent_a[5];
-	  read (pipe_fd[0], parent_a, 20);
-	  if((parent_a[0]=1 )&& (parent_a[1]=2)){
-		int len=sprintf(buf.mtext,"hello");
-    printf("anefnewf");
+	  char *parent_a;
+	  read (pipe_fd[0], parent_a, 100);
+    int client_id=get_number(parent_a+1);
+    int start = get_taski(parent_a);
+    buf.mtype = client_id;
+    switch (parent_a[0])
+    {
+    case '1':
+      len=sprintf(buf.mtext,"hello");
+      // break;
+    // case '2':
+
+      // len=sprintf(buf.mtext, )
+
 		if(msgsnd(msqid,&buf,len+1,0)==-1){
 				perror("msgsnd");
 				exit(0);
 	  }
-
-//   for(int i=0;i<5;i++)
-//   printf("%d ",parent_a[i]);
 	  close (pipe_fd[0]);
-
-
-	}
+      break;
+    
+    default:
+      break;
+    }
     }
 // 
 // 

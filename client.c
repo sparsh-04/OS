@@ -37,10 +37,7 @@ main ()
 
   int which_task_to_do;
   scanf ("%d", &which_task_to_do);
-  int leni;
-  switch (which_task_to_do)
-    {
-    case 1:
+  int leni=0;
     if ((key = ftok("server.c",'B')) == -1){
     perror("ftok");
     exit(1);
@@ -50,26 +47,31 @@ main ()
     exit(1);
   }
       /* code */
-      buf.mtype=client_id;
-      leni = sprintf (buf.mtext, "hi");
+      buf.mtype=1000;
+  switch (which_task_to_do)
+    {
+    case 1:
+    buf.mtext[0]='1';
+      leni=1;
+      leni+= sprintf (buf.mtext+1, "%d",client_id);
+      leni+= sprintf (buf.mtext+leni, "%c",';');
+      leni += sprintf (buf.mtext+leni, "hi");
+      // printf("%s",buf.mtext);
       if (msgsnd (msgqid, &buf, leni + 1, 0) == -1)
 	{
 	  perror ("msgsnd");
 	  exit (0);
 	}
-// if((key=ftok("server.c",'B'))==-1){
-//      perror("ftok");
-//      exit(1);
-// }
+
 if((msgqid=msgget(key, PERMS | IPC_CREAT))==-1){
      perror("MSGGET");
      exit(1);
 }
 printf("Reader: ready to recieve message.\n");
 //printf("Enter: lines of text message.\n");
-buf.mtype=1;
+// buf.mtype=1;
      while (1){
-             if(msgrcv(msgqid,&buf,sizeof(buf.mtext),0,0)==-1){
+             if(msgrcv(msgqid,&buf,sizeof(buf.mtext),client_id,0)==-1){
 
              perror("msgrcv");
              exit(1);
@@ -80,9 +82,26 @@ buf.mtype=1;
      }
 
       break;
+
+
+
+
+
     case 2:
+       
       printf ("Enter the file name\n");
       scanf ("%s", a);
+       leni = sprintf (buf.mtext, "%s",a);
+      if (msgsnd (msgqid, &buf, leni + 1, 0) == -1)
+	{
+	  perror ("msgsnd");
+	  exit (0);
+	}
+
+if((msgqid=msgget(key, PERMS | IPC_CREAT))==-1){
+     perror("MSGGET");
+     exit(1);
+}
       // printf("%s",a);
 
       break;
