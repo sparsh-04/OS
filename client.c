@@ -56,22 +56,18 @@ main ()
       leni+= sprintf (buf.mtext+1, "%d",client_id);
       leni+= sprintf (buf.mtext+leni, "%c",';');
       leni += sprintf (buf.mtext+leni, "hi");
-      // printf("%s",buf.mtext);
+      printf("\t%s",buf.mtext);
       if (msgsnd (msgqid, &buf, leni + 1, 0) == -1)
 	{
 	  perror ("msgsnd");
 	  exit (0);
 	}
 
-if((msgqid=msgget(key, PERMS | IPC_CREAT))==-1){
-     perror("MSGGET");
-     exit(1);
-}
 printf("Reader: ready to recieve message.\n");
 //printf("Enter: lines of text message.\n");
 // buf.mtype=1;
      while (1){
-             if(msgrcv(msgqid,&buf,sizeof(buf.mtext),client_id,0)==-1){
+             if(msgrcv(msgqid,&buf,sizeof(buf.mtext)+1,client_id,0)==-1){
 
              perror("msgrcv");
              exit(1);
@@ -80,10 +76,10 @@ printf("Reader: ready to recieve message.\n");
      printf("Reader: \"%s\"\n",buf.mtext);
 
      }
-     if (msgctl(msgqid, IPC_RMID, NULL) == -1){
-    perror("msgctl");
-    exit(1);
-  }
+  //    if (msgctl(msgqid, IPC_RMID, NULL) == -1){
+  //   perror("msgctl");
+  //   exit(1);
+  // }
 
       break;
 
@@ -116,10 +112,6 @@ if((msgqid=msgget(key, PERMS | IPC_CREAT))==-1){
      printf("Reader: \"%s\"\n",buf.mtext);
 
      }
-     if (msgctl(msgqid, IPC_RMID, NULL) == -1){
-    perror("msgctl");
-    exit(1);
-  }
 
       break;
       // printf("%s",a);
