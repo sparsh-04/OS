@@ -89,22 +89,39 @@ main ()
     int len;
 	  close (pipe_fd[1]);
 	  char *parent_a;
-	  read (pipe_fd[0], parent_a, 100);
+	  read (pipe_fd[0], parent_a, 200);
     int client_id=get_number(parent_a+1);
     int start = get_taski(parent_a);
+    char * file_name;
     buf.mtype = client_id;
     switch (parent_a[0])
     {
     case '1':
       len=sprintf(buf.mtext,"hello");
-      // break;
-    // case '2':
-
-      // len=sprintf(buf.mtext, )
-
+        printf(" q %s",buf.mtext);
 		if(msgsnd(msqid,&buf,len+1,0)==-1){
 				perror("msgsnd");
 				exit(0);
+      break;
+
+    case '2':
+    file_name=buf.mtext;
+    int child_pipe_fd[2];
+    if (pipe (child_pipe_fd) == -1)
+    {
+      perror ("pipe");
+      return 1;
+    }
+    dup2(child_pipe_fd[1], 1);
+        if (execlp("find",".","-name",buf.mtext+start, NULL) == -1){
+         perror("execlp");
+       }
+        close(child_pipe_fd[1]);
+	      read (child_pipe_fd[0], buf.mtext, 200);
+        close(child_pipe_fd[0]);
+
+      // len=sprintf(buf.mtext, )
+
 	  }
 	  close (pipe_fd[0]);
       break;
