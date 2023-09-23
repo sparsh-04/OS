@@ -56,7 +56,7 @@ main ()
       leni+= sprintf (buf.mtext+1, "%d",client_id);
       leni+= sprintf (buf.mtext+leni, "%c",';');
       leni += sprintf (buf.mtext+leni, "hi");
-      printf("\t%s",buf.mtext);
+      // printf("\t%s",buf.mtext);
       if (msgsnd (msgqid, &buf, leni + 1, 0) == -1)
 	{
 	  perror ("msgsnd");
@@ -88,28 +88,35 @@ printf("Reader: ready to recieve message.\n");
 
 
     case 2:
-       
-      printf ("Enter the file name\n");
-      scanf ("%s", a);
-       leni = sprintf (buf.mtext, "%s",a);
+    buf.mtext[0]='2';
+      leni=1;
+      leni+= sprintf (buf.mtext+1, "%d",client_id);
+      leni+= sprintf (buf.mtext+leni, "%c",';');
+      printf ("Enter the file name");
+      fgets(a,200,stdin);
+      fgets(a,1000,stdin);
+
+
+        // scanf ("%s", a); 
+
+      leni += sprintf (buf.mtext+leni, "%s",a);
+
+
       if (msgsnd (msgqid, &buf, leni + 1, 0) == -1)
 	{
 	  perror ("msgsnd");
 	  exit (0);
 	}
+      // printf("%s",buf.mtext);
 
-if((msgqid=msgget(key, PERMS | IPC_CREAT))==-1){
-     perror("MSGGET");
-     exit(1);
-}
         while (1){
-             if(msgrcv(msgqid,&buf,sizeof(buf.mtext),client_id,0)==-1){
+             if(msgrcv(msgqid,&buf,sizeof(buf.mtext)+1,client_id,0)==-1){
 
              perror("msgrcv");
              exit(1);
              }
 
-     printf("Reader: \"%s\"\n",buf.mtext);
+     printf("Reader: %s\n",buf.mtext);
 
      }
 
